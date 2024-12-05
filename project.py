@@ -73,13 +73,18 @@ def main():
             except ValueError as e:
                 print(e)
 
+
         elif choice == "4":
-            name = input("Enter the student's name to search: ")
+            key = input("Enter the student's name to search: ")
             try:
-                student = search_student(student_data, name)
-                average = calculate_average(student["grades"])
-                print(f"Student Found - {student['name']}: Grades = {student['grades']}, Average = {average:.2f}")
+                students = search_student(student_data, key)
+                print(f"Found {len(students)} student(s) matching '{key}':")
+                for student in students:
+                    average = calculate_average(student["grades"])
+                    print(f" - {student['name']}: Grades = {student['grades']}, Average = {average:.2f}")
+
             except ValueError as e:
+
                 print(e)
 
         elif choice == "5":
