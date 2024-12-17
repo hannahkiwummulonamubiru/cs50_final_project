@@ -2,6 +2,9 @@
 
 ![Student Grade Manager](assets/header.png)
 
+## 📹 Video Demo
+You may check the demonstration video on YouTube by [clicking here](https://youtu.be/ywV9LWsAKao?si=DLwBqX-9-EQc4_QQ).
+
 
 ## 📄 Description
 This Python-based **Student Grade Manager** application was developed as part of my final project for the CS50 course: 
