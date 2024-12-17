@@ -2,8 +2,11 @@ import tkinter as tk
 from tkinter import PhotoImage  # For adding images
 from tkinter import messagebox
 from tkinter import ttk  # Import the ttk module for Treeview
+import sqlite3
+import statistics
 
-from project import calculate_average, determine_grade, get_top_student
+from database import add_student_to_db, search_students_in_db, get_all_students_from_db, remove_student_from_db
+from my_important_functions import calculate_average, determine_grade, get_top_student
 from remove_student import remove_student
 from search_student import search_student
 
@@ -39,7 +42,7 @@ def add_student():
         grades_input = grades_entry.get()
         try:
             grades = [float(g.strip()) for g in grades_input.split(",")]
-            student_data.append({"name": name, "grades": grades})
+            add_student_to_db(name, grades)
             messagebox.showinfo("Success", f"Student {name} added successfully.")
             add_window.destroy()
         except ValueError:
@@ -59,7 +62,8 @@ def add_student():
 
 
 def view_students():
-    if not student_data:
+    students = get_all_students_from_db()
+    if not students:
         messagebox.showinfo("No Data", "No students added yet.")
         return
 
@@ -67,7 +71,6 @@ def view_students():
     view_window.title("All Students and Grades")
     view_window.configure(bg="black")
 
-    # Create a Treeview (table) with columns: Name, Grades, Average, Letter Grade
     columns = ("Name", "Grades", "Average", "Letter Grade")
     treeview = ttk.Treeview(view_window, columns=columns, show="headings", height=10)
 
@@ -85,20 +88,21 @@ def view_students():
 
     treeview.pack(padx=10, pady=10, expand=True)
 
-    # Insert data into the table
-    for student in student_data:
+    for student in students:
         average = calculate_average(student["grades"])
         letter_grade = determine_grade(average)
         grades_str = ", ".join(map(str, student["grades"]))
         treeview.insert("", "end", values=(student["name"], grades_str, f"{average:.2f}", letter_grade))
 
 
+
 def find_top_student():
+    students = get_all_students_from_db()
     try:
-        top_student = get_top_student(student_data)
-        top_average = calculate_average(top_student["grades"])
+        top = get_top_student(students)
+        top_average = calculate_average(top["grades"])
         messagebox.showinfo("Top Student",
-                            f"Top student: {top_student['name']} with an average of {top_average:.2f}")
+                            f"Top student: {top['name']} with an average of {top_average:.2f}")
     except ValueError:
         messagebox.showerror("Error", "Student data is empty.")
 
@@ -107,7 +111,7 @@ def search_student_gui():
     def perform_search():
         key = search_entry.get()
         try:
-            results = search_student(student_data, key)
+            results = search_students_in_db(key)
             result_text = f"Found {len(results)} student(s) matching '{key}':\n"
             for student in results:
                 average = calculate_average(student["grades"])
@@ -130,7 +134,7 @@ def remove_student_gui():
     def perform_remove():
         name = remove_entry.get()
         try:
-            message = remove_student(student_data, name)
+            message = remove_student_from_db(name)
             messagebox.showinfo("Success", message)
             remove_window.destroy()
         except ValueError as e:
