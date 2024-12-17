@@ -1,5 +1,5 @@
 import pytest
-from project import calculate_average, determine_grade, get_top_student
+from main import calculate_average, determine_grade, get_top_student
 from calculate_median import calculate_median
 from search_student import search_student
 from remove_student import remove_student
